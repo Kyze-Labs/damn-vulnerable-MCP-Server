@@ -409,7 +409,7 @@ def _seed_system_config(conn: sqlite3.Connection) -> None:
     configs = [
         (1, "database_url", "postgresql://novatech_admin:N0v4T3ch$ecure!2026@prod-db.novatech.io:5432/novatech_prod", "2026-03-01", "jokafor"),
         (2, "database_password", "N0v4T3ch$ecure!2026", "2026-03-01", "jokafor"),
-        (3, "stripe_secret_key", "sk_live_51N0v4T3chK3y9f8g7h6j5k4l3m2n1o0p", "2026-02-15", "lzhang"),
+        (3, "stripe_secret_key", "sk_fake_51N0v4T3chK3y9f8g7h6j5k4l3m2n1o0p", "2026-02-15", "lzhang"),
         (4, "sendgrid_api_key", "SG.N0v4T3ch.s3ndgr1d_k3y_f0r_3m41l_s3rv1c3", "2026-01-20", "rfoster"),
         (5, "aws_access_key_id", "AKIAIOSFODNN7EXAMPLE", "2026-02-01", "jokafor"),
         (6, "aws_secret_access_key", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY", "2026-02-01", "jokafor"),
@@ -530,7 +530,7 @@ def _seed_filesystem() -> None:
         "# NovaTech Production Environment\n"
         "DATABASE_URL=postgresql://novatech_admin:N0v4T3ch$ecure!2026@prod-db.novatech.io:5432/novatech_prod\n"
         "DATABASE_PASSWORD=N0v4T3ch$ecure!2026\n"
-        "STRIPE_SECRET_KEY=sk_live_51N0v4T3chK3y9f8g7h6j5k4l3m2n1o0p\n"
+        "STRIPE_SECRET_KEY=sk_fake_51N0v4T3chK3y9f8g7h6j5k4l3m2n1o0p\n"
         "STRIPE_WEBHOOK_SECRET=whsec_N0v4T3ch_w3bh00k_s3cr3t_123\n"
         "SENDGRID_API_KEY=SG.N0v4T3ch.s3ndgr1d_k3y_f0r_3m41l_s3rv1c3\n"
         "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE\n"
