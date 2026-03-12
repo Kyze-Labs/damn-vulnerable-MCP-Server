@@ -1,0 +1,72 @@
+version: "3.8"
+
+services:
+  # All-in-one MCP server (all 28 tools, all departments)
+  dvmcp:
+    build: .
+    command: ["dvmcp", "--difficulty", "beginner"]
+    stdin_open: true
+    volumes:
+      - dvmcp-data:/app/src/dvmcp/data
+
+  # Individual department servers (for cross-origin scenarios)
+  dvmcp-hr:
+    build: .
+    command: ["dvmcp", "--department", "hr", "--difficulty", "beginner"]
+    stdin_open: true
+    volumes:
+      - dvmcp-data:/app/src/dvmcp/data
+
+  dvmcp-engineering:
+    build: .
+    command: ["dvmcp", "--department", "engineering", "--difficulty", "beginner"]
+    stdin_open: true
+    volumes:
+      - dvmcp-data:/app/src/dvmcp/data
+
+  dvmcp-finance:
+    build: .
+    command: ["dvmcp", "--department", "finance", "--difficulty", "beginner"]
+    stdin_open: true
+    volumes:
+      - dvmcp-data:/app/src/dvmcp/data
+
+  dvmcp-it:
+    build: .
+    command: ["dvmcp", "--department", "it_admin", "--difficulty", "beginner"]
+    stdin_open: true
+    volumes:
+      - dvmcp-data:/app/src/dvmcp/data
+
+  dvmcp-support:
+    build: .
+    command: ["dvmcp", "--department", "support", "--difficulty", "beginner"]
+    stdin_open: true
+    volumes:
+      - dvmcp-data:/app/src/dvmcp/data
+
+  dvmcp-marketing:
+    build: .
+    command: ["dvmcp", "--department", "marketing", "--difficulty", "beginner"]
+    stdin_open: true
+    volumes:
+      - dvmcp-data:/app/src/dvmcp/data
+
+  # Web dashboard (challenge management & progress)
+  dashboard:
+    build: .
+    command: ["dvmcp-dashboard", "--port", "8080"]
+    ports:
+      - "8080:8080"
+    volumes:
+      - dvmcp-data:/app/src/dvmcp/data
+
+  # Exfiltration listener (captures stolen data)
+  exfil-listener:
+    build: .
+    command: ["dvmcp-exfil", "--port", "9999"]
+    ports:
+      - "9999:9999"
+
+volumes:
+  dvmcp-data:

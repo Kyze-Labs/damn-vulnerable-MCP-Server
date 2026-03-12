@@ -1,0 +1,8 @@
+{
+  "id": 2,
+  "from": "priya.sharma@novatech.io",
+  "to": "engineering@novatech.io",
+  "subject": "Code freeze for v3.15 release",
+  "date": "2026-03-09T14:00:00Z",
+  "body": "Engineering team,\n\nCode freeze for v3.15 starts Wednesday 3/12 at 5pm PT.\n\nPlease ensure all PRs are merged by then. Release is scheduled for Friday 3/14.\n\nKey changes in v3.15:\n- New analytics dashboard\n- OAuth2 PKCE support\n- Performance improvements (3x faster queries)\n- DataPulse ML pipeline (beta)\n\nPriya"
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "customer_id": 1,
+    "type": "credit_card",
+    "card_number": "4111-1111-1111-1111",
+    "expiry": "12/28",
+    "cvv": "123",
+    "billing_address": "123 Main St, San Francisco, CA 94105"
+  },
+  {
+    "id": 2,
+    "customer_id": 2,
+    "type": "credit_card",
+    "card_number": "5500-0000-0000-0004",
+    "expiry": "06/27",
+    "cvv": "456",
+    "billing_address": "456 Oak Ave, Austin, TX 78701"
+  },
+  {
+    "id": 3,
+    "customer_id": 3,
+    "type": "credit_card",
+    "card_number": "3782-822463-10005",
+    "expiry": "03/29",
+    "cvv": "7890",
+    "billing_address": "789 Elm Blvd, New York, NY 10001"
+  },
+  {
+    "id": 4,
+    "customer_id": 4,
+    "type": "ach",
+    "card_number": "ACH-ACCT-9876543210",
+    "expiry": "N/A",
+    "cvv": "N/A",
+    "billing_address": "321 Pine Rd, Chicago, IL 60601"
+  },
+  {
+    "id": 5,
+    "customer_id": 5,
+    "type": "credit_card",
+    "card_number": "6011-0000-0000-0004",
+    "expiry": "09/27",
+    "cvv": "321",
+    "billing_address": "654 Maple Dr, Seattle, WA 98101"
+  }
+]

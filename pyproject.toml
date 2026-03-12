@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dvmcp"
+version = "2.0.0"
+description = "Damn Vulnerable MCP - An intentionally vulnerable Model Context Protocol server for security training"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "NovaTech Security Labs" }]
+keywords = ["mcp", "security", "training", "vulnerable", "pentesting"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Education",
+    "Topic :: Security",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.optional-dependencies]
+dashboard = ["fastapi>=0.104.0", "uvicorn>=0.24.0", "jinja2>=3.1.0"]
+all = ["fastapi>=0.104.0", "uvicorn>=0.24.0", "jinja2>=3.1.0"]
+
+[project.scripts]
+dvmcp = "dvmcp.core.server:main"
+dvmcp-dashboard = "dvmcp.dashboard.app:main"
+dvmcp-exfil = "dvmcp.exfil_listener.server:main"
+
+[project.entry-points."dvmcp.departments"]
+hr = "dvmcp.departments.hr.server:serve"
+engineering = "dvmcp.departments.engineering.server:serve"
+finance = "dvmcp.departments.finance.server:serve"
+it_admin = "dvmcp.departments.it_admin.server:serve"
+support = "dvmcp.departments.support.server:serve"
+marketing = "dvmcp.departments.marketing.server:serve"
+
+[tool.setuptools.packages.find]
+where = ["src"]
