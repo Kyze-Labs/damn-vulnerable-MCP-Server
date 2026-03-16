@@ -31,7 +31,7 @@
       <div class="control-group">
         <label class="control-label">Difficulty</label>
         <div class="select-wrapper">
-          <select id="difficultySelect">
+          <select id="difficultySelect" onchange="onSettingsChange()">
             <option value="beginner">Beginner</option>
             <option value="intermediate">Intermediate</option>
             <option value="advanced">Advanced</option>
@@ -43,7 +43,7 @@
       <div class="control-group">
         <label class="control-label">Department</label>
         <div class="select-wrapper">
-          <select id="departmentSelect">
+          <select id="departmentSelect" onchange="onSettingsChange()">
             <option value="">All Departments</option>
             <option value="hr">HR</option>
             <option value="engineering">Engineering</option>

@@ -40,15 +40,17 @@ class MCPProxy:
     def connected(self) -> bool:
         return self.process is not None and self.process.poll() is None
 
-    async def connect(self, difficulty: str = "beginner", department: str | None = None) -> dict:
+    async def connect(self, difficulty: str = "beginner", department: str | None = None, preserve_history: bool = False) -> dict:
         """Spawn the DVMCP server and perform the MCP handshake."""
         await self.disconnect()
 
         self.difficulty = difficulty
         self.department = department
-        self.request_id = 0
-        self.history = []
         self._read_buffer = ""
+
+        if not preserve_history:
+            self.request_id = 0
+            self.history = []
 
         cmd = [sys.executable, "-m", "dvmcp.core.server", "--difficulty", difficulty]
         if department:
@@ -222,6 +224,21 @@ if HAS_FASTAPI:
         difficulty = body.get("difficulty", "beginner")
         department = body.get("department", None)
         result = await proxy.connect(difficulty, department)
+        return {
+            "ok": True,
+            "serverInfo": proxy.server_info,
+            "difficulty": proxy.difficulty,
+            "department": proxy.department,
+            "initResponse": result,
+        }
+
+    @app.post("/api/reconnect")
+    async def api_reconnect(request: Request):
+        """Reconnect with new settings, preserving request history."""
+        body = await request.json()
+        difficulty = body.get("difficulty", proxy.difficulty)
+        department = body.get("department", proxy.department)
+        result = await proxy.connect(difficulty, department, preserve_history=True)
         return {
             "ok": True,
             "serverInfo": proxy.server_info,

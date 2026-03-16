@@ -77,6 +77,38 @@ async function toggleConnection() {
   }
 }
 
+async function reconnectWithSettings() {
+  if (!isConnected) return;
+
+  const difficulty = document.getElementById('difficultySelect').value;
+  const department = document.getElementById('departmentSelect').value || null;
+
+  showToast(`Reconnecting — ${difficulty}${department ? ', ' + department : ''}...`, 'info');
+
+  try {
+    const res = await fetch('/api/reconnect', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ difficulty, department }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      await loadTools();
+      refreshHistory();
+      loadServerInfo();
+      showToast(`Reconnected — ${difficulty}, ${tools.length} tools loaded`, 'success');
+    }
+  } catch (e) {
+    showToast('Reconnect failed: ' + e.message, 'error');
+  }
+}
+
+function onSettingsChange() {
+  if (isConnected) {
+    reconnectWithSettings();
+  }
+}
+
 async function loadTools() {
   try {
     const res = await fetch('/api/tools');
