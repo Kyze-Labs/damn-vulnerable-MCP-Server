@@ -19,6 +19,7 @@ DVMCP is a self-contained training platform for learning how to attack and defen
 - [Quick Start](#quick-start)
   - [Local Installation](#local-installation)
   - [Docker](#docker)
+- [MCP Inspector](#mcp-inspector)
 - [MCP Host Configuration](#mcp-host-configuration)
 - [Architecture](#architecture)
 - [Vulnerability Categories](#vulnerability-categories-19)
@@ -60,11 +61,14 @@ dvmcp --difficulty beginner
 dvmcp --department hr --difficulty beginner
 ```
 
-To use the web dashboard and exfiltration listener, install with extras:
+To use the web dashboard, MCP inspector, and exfiltration listener, install with extras:
 
 ```bash
-# Install with dashboard + exfil listener dependencies
+# Install with all optional dependencies
 pip install -e ".[all]"
+
+# Start the MCP Inspector (web-based MCP client)
+dvmcp-inspector --port 5173
 
 # Start the exfil listener (captures stolen data)
 dvmcp-exfil --port 9999
@@ -87,12 +91,13 @@ docker-compose run --rm dvmcp
 # Run a specific department server
 docker-compose run --rm dvmcp-hr
 
-# Start the dashboard and exfil listener
-docker-compose up dashboard exfil-listener
+# Start the inspector, dashboard, and exfil listener
+docker-compose up inspector dashboard exfil-listener
 ```
 
 | Service | URL | Description |
 |---------|-----|-------------|
+| `inspector` | http://localhost:5173 | Web-based MCP client for testing and invoking tools |
 | `dashboard` | http://localhost:8080 | Web dashboard for browsing challenges and tracking progress |
 | `exfil-listener` | http://localhost:9999 | Captures exfiltrated data from challenges |
 
@@ -101,6 +106,64 @@ Available department services: `dvmcp-hr`, `dvmcp-engineering`, `dvmcp-finance`,
 All services share a `dvmcp-data` volume for the SQLite database and seed data, so cross-department scenarios work out of the box.
 
 > **Note:** The MCP server services (`dvmcp`, `dvmcp-hr`, etc.) communicate over stdio (JSON-RPC), not HTTP. Use `docker-compose run` (not `up`) to interact with them via your MCP client.
+
+---
+
+## MCP Inspector
+
+The MCP Inspector is a **web-based client** for interacting with the DVMCP server directly from your browser. It works like [MCP Inspector](https://github.com/modelcontextprotocol/inspector) — a proxy server spawns the DVMCP server as a subprocess and bridges HTTP requests to stdio JSON-RPC messages.
+
+### Starting the Inspector
+
+```bash
+# Local
+dvmcp-inspector
+
+# Custom port
+dvmcp-inspector --port 5173
+
+# Docker
+docker-compose up inspector
+```
+
+Then open **http://localhost:5173** in your browser.
+
+### How It Works
+
+```
+Browser (HTML/JS)          FastAPI Proxy           DVMCP Server
+      |                        |                        |
+      |--- fetch /api/... --->|                        |
+      |                        |--- stdin (JSON-RPC) -->|
+      |                        |<-- stdout (JSON-RPC) --|
+      |<-- HTTP JSON ---------|                        |
+```
+
+The browser cannot talk to a stdio process directly. The FastAPI proxy server spawns the MCP server as a child process, translates HTTP API calls into JSON-RPC messages written to the server's `stdin`, reads responses from `stdout`, and returns them as HTTP JSON.
+
+### Features
+
+- **Connect/Disconnect** — Spawn the DVMCP server with a chosen difficulty level and optional department filter. The proxy performs the MCP handshake (`initialize` + `notifications/initialized`) automatically.
+- **Tool Browser** — Sidebar listing all available tools with search/filter. Tools are color-coded by department (HR, Engineering, Finance, IT Admin, Support, Marketing).
+- **Dynamic Forms** — Auto-generates input forms from each tool's `inputSchema`. Supports strings, numbers, booleans, enums, objects, and arrays.
+- **Tool Execution** — Call any tool and view the formatted result with success/error status and response duration.
+- **JSON-RPC Console** — Send arbitrary raw JSON-RPC requests with a split-pane view (request on the left, response on the right). Useful for testing hidden tools like `it._admin_reset` or crafting custom payloads.
+- **Request History** — Full log of every JSON-RPC message exchanged with the server, including requests, notifications, responses, and timing. Click any entry to expand the raw JSON.
+- **Server Info** — Displays server name, version, protocol version, capabilities, difficulty, department, and the raw `initialize` response.
+- **Copy as JSON-RPC** — Export the current tool call as a raw JSON-RPC 2.0 message for use with other clients.
+- **View Schema** — Inspect the full `inputSchema` of any tool.
+- **Resizable Sidebar** — Drag the sidebar edge to resize.
+- **Toast Notifications** — Non-intrusive success/error/info alerts.
+
+### Using the Inspector for Challenges
+
+1. **Connect** with the desired difficulty (e.g., Beginner).
+2. **Browse tools** in the sidebar — each tool shows its department and description.
+3. **Select a tool** to see its parameters and schema.
+4. **Enter a payload** (e.g., `' OR 1=1 --` for SQL injection in `hr.search_employees`).
+5. **Click Execute** and inspect the response.
+6. **Switch to JSON-RPC Console** to send raw requests for advanced attacks (e.g., calling hidden tools, chaining requests).
+7. **Check History** to review all requests and responses.
 
 ---
 
@@ -306,7 +369,8 @@ dvmcp-v2/
 │   ├── departments/    # hr, engineering, finance, it_admin, support, marketing
 │   ├── challenges/     # beginner, intermediate, advanced, expert
 │   ├── data/           # Seed data, planted secrets, poisoned content
-│   ├── dashboard/      # Web dashboard (FastAPI)
+│   ├── inspector/      # MCP Inspector — web-based MCP client (FastAPI + static HTML/CSS/JS)
+│   ├── dashboard/      # Web dashboard for challenge browsing (FastAPI)
 │   └── exfil_listener/ # Exfiltration capture server
 ├── tests/              # Test suite
 ├── docs/               # Documentation
@@ -337,12 +401,19 @@ sudo systemctl start docker
 
 ### Port already in use
 
-If ports 8080 or 9999 are occupied, override them in docker-compose:
+If ports 5173, 8080, or 9999 are occupied, override them in docker-compose:
 
 ```bash
 # Use alternative ports
+docker-compose run -p 5174:5173 inspector
 docker-compose run -p 8081:8080 dashboard
 docker-compose run -p 9998:9999 exfil-listener
+```
+
+For local installs, use the `--port` flag:
+
+```bash
+dvmcp-inspector --port 5174
 ```
 
 ### MCP server produces no visible output
