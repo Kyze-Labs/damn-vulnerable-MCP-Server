@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DVMCP Inspector</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- Toast container -->
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div class="header-title">
+      <h1>DVMCP Inspector</h1>
+      <span class="header-version">v2.0.0</span>
+    </div>
+  </div>
+  <div class="header-center">
+    <div class="connection-controls">
+      <div class="control-group">
+        <label class="control-label">Difficulty</label>
+        <div class="select-wrapper">
+          <select id="difficultySelect" onchange="onSettingsChange()">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+            <option value="expert">Expert</option>
+          </select>
+          <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Department</label>
+        <div class="select-wrapper">
+          <select id="departmentSelect" onchange="onSettingsChange()">
+            <option value="">All Departments</option>
+            <option value="hr">HR</option>
+            <option value="engineering">Engineering</option>
+            <option value="finance">Finance</option>
+            <option value="it_admin">IT Admin</option>
+            <option value="support">Support</option>
+            <option value="marketing">Marketing</option>
+          </select>
+          <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="connection-status" id="connectionStatus">
+      <span class="status-indicator off" id="statusDot"></span>
+      <span class="status-label" id="statusText">Disconnected</span>
+    </div>
+    <button class="btn-connect" id="connectBtn" onclick="toggleConnection()">
+      <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14"/>
+        <path d="M12 5l7 7-7 7"/>
+      </svg>
+      <span>Connect</span>
+    </button>
+  </div>
+</header>
+
+<!-- Main layout -->
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-search">
+      <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="toolSearch" placeholder="Search tools..." oninput="filterTools()">
+      <span class="tool-count-badge" id="toolCount">0</span>
+    </div>
+    <div class="tool-list" id="toolList">
+      <div class="empty-state sidebar-empty">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.3">
+          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+        </svg>
+        <p>Connect to load tools</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Resize handle -->
+  <div class="resize-handle" id="resizeHandle"></div>
+
+  <!-- Content area -->
+  <main class="content">
+    <!-- Tab bar -->
+    <nav class="tab-bar">
+      <div class="tab-list">
+        <button class="tab active" data-tab="tools" onclick="switchTab('tools')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          Tools
+        </button>
+        <button class="tab" data-tab="raw" onclick="switchTab('raw')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          JSON-RPC
+        </button>
+        <button class="tab" data-tab="history" onclick="switchTab('history')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          History
+          <span class="tab-badge" id="historyBadge">0</span>
+        </button>
+        <button class="tab" data-tab="server" onclick="switchTab('server')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          Server
+        </button>
+      </div>
+    </nav>
+
+    <!-- Tools panel -->
+    <div class="panel panel-no-pad active" id="panel-tools">
+      <div class="tool-detail" id="toolDetail">
+        <div class="empty-state">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" opacity="0.15">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+          <p class="empty-title">No tool selected</p>
+          <p class="empty-sub">Choose a tool from the sidebar to inspect and invoke it</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Raw JSON-RPC panel -->
+    <div class="panel" id="panel-raw">
+      <div class="raw-editor">
+        <div class="raw-editor-header">
+          <div>
+            <h3>JSON-RPC Console</h3>
+            <p class="raw-editor-sub">Send raw JSON-RPC 2.0 requests to the MCP server</p>
+          </div>
+        </div>
+        <div class="raw-split">
+          <div class="raw-request">
+            <div class="raw-section-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+              Request
+            </div>
+            <div class="form-group">
+              <label>Method</label>
+              <input type="text" id="rawMethod" value="tools/list" placeholder="e.g. tools/list, tools/call" spellcheck="false">
+            </div>
+            <div class="form-group" style="flex:1;display:flex;flex-direction:column">
+              <label>Parameters</label>
+              <textarea id="rawParams" placeholder="{}" spellcheck="false" style="flex:1">{}</textarea>
+            </div>
+            <button class="btn btn-primary btn-send" onclick="sendRaw()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Send Request
+            </button>
+          </div>
+          <div class="raw-response">
+            <div class="raw-section-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+              Response
+            </div>
+            <div id="rawResult" class="raw-result-area">
+              <div class="empty-state" style="height:100%">
+                <p class="empty-sub">Response will appear here</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History panel -->
+    <div class="panel" id="panel-history">
+      <div class="panel-header">
+        <div>
+          <h3>Request History</h3>
+          <p class="panel-sub">All JSON-RPC messages exchanged with the server</p>
+        </div>
+        <button class="btn btn-ghost" onclick="clearHistory()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Clear All
+        </button>
+      </div>
+      <div id="historyList"></div>
+    </div>
+
+    <!-- Server Info panel -->
+    <div class="panel" id="panel-server">
+      <div class="panel-header">
+        <div>
+          <h3>Server Information</h3>
+          <p class="panel-sub">Connection details and MCP server capabilities</p>
+        </div>
+      </div>
+      <div id="serverInfo">
+        <div class="empty-state" style="height:auto;padding:60px 0">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" opacity="0.15">
+            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+          </svg>
+          <p class="empty-title">No server connected</p>
+          <p class="empty-sub">Connect to view server details</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>

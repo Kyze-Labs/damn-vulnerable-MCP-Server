@@ -26,6 +26,7 @@ all = ["fastapi>=0.104.0", "uvicorn>=0.24.0", "jinja2>=3.1.0"]
 [project.scripts]
 dvmcp = "dvmcp.core.server:main"
 dvmcp-dashboard = "dvmcp.dashboard.app:main"
+dvmcp-inspector = "dvmcp.inspector.app:main"
 dvmcp-exfil = "dvmcp.exfil_listener.server:main"
 
 [project.entry-points."dvmcp.departments"]
@@ -38,3 +39,6 @@ marketing = "dvmcp.departments.marketing.server:serve"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"dvmcp.inspector" = ["static/**/*"]

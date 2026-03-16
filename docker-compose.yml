@@ -61,6 +61,15 @@ services:
     volumes:
       - dvmcp-data:/app/src/dvmcp/data
 
+  # MCP Inspector (web-based MCP client for testing tools)
+  inspector:
+    build: .
+    command: ["dvmcp-inspector", "--port", "5173", "--host", "0.0.0.0"]
+    ports:
+      - "5173:5173"
+    volumes:
+      - dvmcp-data:/app/src/dvmcp/data
+
   # Exfiltration listener (captures stolen data)
   exfil-listener:
     build: .
