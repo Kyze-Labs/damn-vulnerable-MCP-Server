@@ -363,6 +363,7 @@ textarea { font-family: var(--font-mono); font-size: 12px; line-height: 1.6; res
   display: none;
 }
 .panel.active { display: flex; flex-direction: column; }
+.panel.panel-no-pad { padding: 0; }
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -405,13 +406,77 @@ textarea { font-family: var(--font-mono); font-size: 12px; line-height: 1.6; res
 /* ── Tool Detail ───────────────────────────────────────────── */
 .tool-detail {
   flex: 1;
-  overflow-y: auto;
+  overflow: hidden;
   padding: 24px;
+  display: flex;
+  flex-direction: column;
 }
 .tool-header {
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+/* Split layout: request on left, response on right */
+.tool-split {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.tool-split-request {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-width: 0;
+}
+.tool-split-response {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+.tool-split-response .param-section {
+  margin-bottom: 0;
+}
+
+/* Inline result (inside split response pane) */
+.tool-result-inline {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.tool-result-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+.tool-result-status .duration { color: var(--text-disabled); font-weight: 500; }
+.tool-result-pre {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text-secondary);
+  flex: 1;
+  overflow-y: auto;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .tool-split { flex-direction: column; overflow-y: auto; }
+  .tool-split-request, .tool-split-response { overflow: visible; }
 }
 .tool-name-display {
   font-size: 20px;

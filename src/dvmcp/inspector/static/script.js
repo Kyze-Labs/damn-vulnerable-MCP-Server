@@ -279,6 +279,8 @@ function renderToolDetail() {
     ? '<p class="no-params">This tool takes no parameters</p>'
     : formFields;
 
+  const gearIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+
   container.innerHTML = `
     <div class="tool-header">
       <div class="tool-name-display">
@@ -288,32 +290,51 @@ function renderToolDetail() {
       <div class="tool-description">${t.description || 'No description available'}</div>
     </div>
 
-    <div class="param-section">
-      <div class="param-section-header">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        Parameters
+    <div class="tool-split">
+      <div class="tool-split-request">
+        <div class="param-section">
+          <div class="param-section-header">
+            ${gearIcon}
+            Parameters
+          </div>
+          <div class="param-section-body">
+            ${paramsContent}
+          </div>
+        </div>
+
+        <div class="tool-actions">
+          <button class="btn btn-primary btn-send" id="callBtn" onclick="callSelectedTool()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Execute
+          </button>
+          <button class="btn" onclick="copyAsJSON()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy JSON-RPC
+          </button>
+          <button class="btn" onclick="showSchema()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            View Schema
+          </button>
+        </div>
       </div>
-      <div class="param-section-body">
-        ${paramsContent}
+
+      <div class="tool-split-response">
+        <div class="param-section" style="height:100%;display:flex;flex-direction:column">
+          <div class="param-section-header">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+            Response
+          </div>
+          <div class="param-section-body" style="flex:1;overflow-y:auto" id="toolResult">
+            <div class="empty-state" style="height:100%;min-height:200px">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" opacity="0.15">
+                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+              <p class="empty-sub">Execute the tool to see the response</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="tool-actions">
-      <button class="btn btn-primary btn-send" id="callBtn" onclick="callSelectedTool()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        Execute
-      </button>
-      <button class="btn" onclick="copyAsJSON()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copy JSON-RPC
-      </button>
-      <button class="btn" onclick="showSchema()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-        View Schema
-      </button>
-    </div>
-
-    <div id="toolResult"></div>
   `;
 }
 
@@ -392,14 +413,14 @@ function showSchema() {
   const schema = selectedTool.inputSchema || {};
   const resultEl = document.getElementById('toolResult');
   resultEl.innerHTML = `
-    <div class="result-box">
-      <div class="result-header">
+    <div class="tool-result-inline">
+      <div class="tool-result-status">
         <span class="status-ok">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           Input Schema
         </span>
       </div>
-      <div class="result-body"><pre>${escapeHtml(JSON.stringify(schema, null, 2))}</pre></div>
+      <pre class="tool-result-pre">${escapeHtml(JSON.stringify(schema, null, 2))}</pre>
     </div>`;
 }
 
@@ -448,6 +469,23 @@ function renderResult(containerId, data, durationMs) {
     ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
     : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
 
+  // Inside the tool split panel, render inline (no wrapping card)
+  if (containerId === 'toolResult') {
+    container.innerHTML = `
+      <div class="tool-result-inline">
+        <div class="tool-result-status">
+          <span class="${isError ? 'status-err' : 'status-ok'}">
+            ${statusIcon}
+            ${isError ? 'Error' : 'Success'}
+          </span>
+          ${durationMs != null ? `<span class="duration">${durationMs}ms</span>` : ''}
+        </div>
+        <pre class="tool-result-pre">${escapeHtml(body)}</pre>
+      </div>`;
+    return;
+  }
+
+  // For raw result and others, use the card style
   container.innerHTML = `
     <div class="result-box">
       <div class="result-header">
