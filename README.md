@@ -47,8 +47,8 @@ DVMCP is a self-contained training platform for learning how to attack and defen
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/dvmcp-v2.git
-cd dvmcp-v2
+git clone https://github.com/Kyze-Labs/damn-vulnerable-MCP-Server
+cd damn-vulnerable-MCP-Server
 
 # Install the core MCP server
 pip install -e .
