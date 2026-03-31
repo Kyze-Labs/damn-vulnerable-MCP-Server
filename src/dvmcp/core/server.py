@@ -118,6 +118,8 @@ async def run_server(department: str | None = None) -> None:
     from dvmcp.data.seed import seed_all
     seed_all()
 
+    print("DVMCP server is running. Waiting for JSON-RPC input on stdin...", file=sys.stderr, flush=True)
+
     reader = asyncio.StreamReader()
     protocol = asyncio.StreamReaderProtocol(reader)
     await asyncio.get_event_loop().connect_read_pipe(lambda: protocol, sys.stdin)
